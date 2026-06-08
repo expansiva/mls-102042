@@ -1,0 +1,273 @@
+export const recordSalePagePlan = {
+  "schemaVersion": "2026-06-06",
+  "artifactType": "page",
+  "artifactId": "recordSale",
+  "moduleName": "barbershopPro",
+  "status": "draft",
+  "source": {
+    "agentName": "agentPlanPageDefinition",
+    "stepId": 89,
+    "planId": ""
+  },
+  "data": {
+    "pageDefinition": {
+      "pageId": "recordSale",
+      "pageName": "Record sale",
+      "actor": "receptionist",
+      "purpose": "Record service or retail sale and capture payment details.",
+      "capabilities": [
+        "checkInAndCheckout"
+      ],
+      "flowRefs": {
+        "experienceFlows": [],
+        "entityLifecycles": [
+          "checkInCheckout"
+        ],
+        "taskWorkflows": [],
+        "automations": []
+      },
+      "pluginRefs": [],
+      "mdmRefs": [
+        "product",
+        "service"
+      ],
+      "pageInputs": [
+        {
+          "name": "appointmentId",
+          "type": "string",
+          "required": false,
+          "sources": [
+            "routeParam",
+            "previousStepResult"
+          ],
+          "description": "Appointment identifier when the sale is tied to a completed appointment.",
+          "entityRef": "Appointment",
+          "fieldRef": "Appointment.id"
+        },
+        {
+          "name": "appointmentSummary",
+          "type": "object",
+          "required": false,
+          "sources": [
+            "previousStepResult"
+          ],
+          "description": "Appointment summary data passed from checkout to avoid a refetch.",
+          "entityRef": "Appointment"
+        },
+        {
+          "name": "retailOnlyFlag",
+          "type": "boolean",
+          "required": false,
+          "sources": [
+            "queryParam"
+          ],
+          "description": "Indicates the sale is retail-only without a linked appointment."
+        }
+      ],
+      "navigationRefs": [
+        {
+          "direction": "inbound",
+          "pageId": "appointmentDetail",
+          "trigger": "Record sale"
+        },
+        {
+          "direction": "inbound",
+          "pageId": "appointmentCheckout",
+          "trigger": "Proceed to sale"
+        }
+      ],
+      "sections": [
+        {
+          "sectionName": "Sale context",
+          "mode": "view",
+          "organisms": [
+            {
+              "organismName": "AppointmentContextSummary",
+              "purpose": "Show the appointment summary when the sale is tied to a completed appointment.",
+              "userActions": [],
+              "requiredEntities": [
+                "Appointment",
+                "StaffMember"
+              ],
+              "readsFields": [
+                "Appointment.id",
+                "Appointment.status",
+                "Appointment.serviceItems",
+                "Appointment.customerName",
+                "Appointment.staffMemberName",
+                "Appointment.completedAt"
+              ],
+              "writesFields": [],
+              "rulesApplied": [
+                "saleRequiresCompletion"
+              ]
+            }
+          ]
+        },
+        {
+          "sectionName": "Sale items",
+          "mode": "edit",
+          "organisms": [
+            {
+              "organismName": "SaleItemsEntry",
+              "purpose": "Capture service and product line items for the sale.",
+              "userActions": [
+                "Add service line item",
+                "Add product line item",
+                "Edit quantity",
+                "Remove line item"
+              ],
+              "requiredEntities": [
+                "Sale"
+              ],
+              "readsFields": [],
+              "writesFields": [
+                "Sale.lineItems",
+                "Sale.subtotalAmount",
+                "Sale.taxAmount",
+                "Sale.totalAmount"
+              ],
+              "rulesApplied": [
+                "saleRequiresCompletion"
+              ]
+            }
+          ]
+        },
+        {
+          "sectionName": "Payment and confirmation",
+          "mode": "edit",
+          "organisms": [
+            {
+              "organismName": "PaymentDetailsForm",
+              "purpose": "Capture payment method and amounts for the sale.",
+              "userActions": [
+                "Select payment method",
+                "Enter payment amount",
+                "Add split payment"
+              ],
+              "requiredEntities": [
+                "Sale"
+              ],
+              "readsFields": [
+                "Sale.totalAmount"
+              ],
+              "writesFields": [
+                "Sale.payments",
+                "Sale.paidAmount",
+                "Sale.balanceDue"
+              ],
+              "rulesApplied": [
+                "saleRequiresCompletion"
+              ]
+            },
+            {
+              "organismName": "RecordSaleActionBar",
+              "purpose": "Confirm and record the sale with inventory and commission updates.",
+              "userActions": [
+                "Record sale"
+              ],
+              "requiredEntities": [
+                "Sale",
+                "InventoryLedger",
+                "CommissionRule",
+                "StaffMember",
+                "Appointment"
+              ],
+              "readsFields": [
+                "Sale.lineItems",
+                "Sale.payments",
+                "Sale.totalAmount",
+                "Appointment.id",
+                "Appointment.status"
+              ],
+              "writesFields": [
+                "Sale.id",
+                "InventoryLedger.entryStatus"
+              ],
+              "rulesApplied": [
+                "saleRequiresCompletion",
+                "commissionCalculationRequired"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "bffCommands": [
+      {
+        "commandName": "recordSale",
+        "purpose": "Record service or retail sale for an appointment or retail-only checkout.",
+        "kind": "command",
+        "input": {
+          "appointmentId": "string (optional)",
+          "retailOnlyFlag": "boolean",
+          "lineItems": [
+            {
+              "itemType": "service | product",
+              "itemId": "string",
+              "description": "string (optional)",
+              "quantity": "number",
+              "unitPrice": "number"
+            }
+          ],
+          "payments": [
+            {
+              "method": "string",
+              "amount": "number",
+              "reference": "string (optional)"
+            }
+          ],
+          "notes": "string (optional)"
+        },
+        "output": {
+          "saleId": "string",
+          "receiptSummary": {
+            "totalAmount": "number",
+            "taxAmount": "number (optional)",
+            "paidAmount": "number",
+            "balanceDue": "number"
+          }
+        },
+        "readsEntities": [
+          "Appointment",
+          "Product",
+          "CommissionRule",
+          "StaffMember"
+        ],
+        "writesEntities": [
+          "Sale",
+          "InventoryLedger"
+        ],
+        "readsTables": [
+          "sale",
+          "inventory_ledger_entry",
+          "commission_rule",
+          "staff_member",
+          "appointment"
+        ],
+        "writesTables": [
+          "sale",
+          "inventory_ledger_entry",
+          "operations_metrics",
+          "performance_metrics"
+        ],
+        "usecaseRefs": [
+          "recordSaleUsecase"
+        ],
+        "layerContract": {
+          "controllerLayer": "layer_2_controllers",
+          "mustCallLayer": "layer_3_usecases",
+          "directTableAccessForbidden": true
+        },
+        "rulesApplied": [
+          "saleRequiresCompletion",
+          "inventoryCannotGoNegative",
+          "commissionCalculationRequired",
+          "singleLocationScope"
+        ]
+      }
+    ]
+  }
+} as const;
+
+export default recordSalePagePlan;

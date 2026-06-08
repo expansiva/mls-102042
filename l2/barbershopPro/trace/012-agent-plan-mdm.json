@@ -1,0 +1,150 @@
+{
+  "savedAt": "2026-06-08T18:49:34.598Z",
+  "agentName": "agentPlanMDM",
+  "stepId": 12,
+  "planning": {
+    "planId": "plan-mdm",
+    "dependsOn": [
+      "plan-finalize-solution-plan"
+    ],
+    "executionMode": "parallel_static",
+    "executionHost": "client"
+  },
+  "status": "waiting_after_prompt",
+  "payload": {
+    "type": "flexible",
+    "result": {
+      "toolName": "submitMdmPlan",
+      "arguments": {
+        "status": "ok",
+        "result": {
+          "mdmDomains": [
+            {
+              "domainId": "customer",
+              "title": "Customer",
+              "masterEntities": [
+                "Customer"
+              ],
+              "sourceOfTruth": "customerService",
+              "consumers": [
+                "customerListPage",
+                "upsellSuggestionWorkflow",
+                "recommendationAgent",
+                "createCustomerUsecase",
+                "updateCustomerUsecase",
+                "requestUpsellSuggestionUsecase"
+              ],
+              "governanceRules": [
+                "Master customer records are governed by singleLocationScope",
+                "Customer identity must be validated before profile creation"
+              ]
+            },
+            {
+              "domainId": "staffMember",
+              "title": "Staff member",
+              "masterEntities": [
+                "StaffMember"
+              ],
+              "sourceOfTruth": "staffService",
+              "consumers": [
+                "appointmentBookingPage",
+                "adminSettingsPage",
+                "staffSchedulePage",
+                "commissionCalculationWorkflow",
+                "walkInSlotSuggestionWorkflow",
+                "createStaffMemberUsecase",
+                "updateStaffScheduleUsecase",
+                "calculateCommissionUsecase",
+                "metricTableOperations",
+                "metricTablePerformance"
+              ],
+              "governanceRules": [
+                "Master staff records are governed by singleLocationScope",
+                "Active staff members must have a defined role to enforce RBAC"
+              ]
+            },
+            {
+              "domainId": "service",
+              "title": "Service",
+              "masterEntities": [
+                "Service"
+              ],
+              "sourceOfTruth": "serviceCatalogService",
+              "consumers": [
+                "appointmentBookingPage",
+                "serviceCatalogPage",
+                "upsellSuggestionWorkflow",
+                "recommendationAgent",
+                "createServiceUsecase",
+                "updateServiceUsecase",
+                "requestUpsellSuggestionUsecase"
+              ],
+              "governanceRules": [
+                "Master service records are governed by serviceDurationPriceRequired and singleLocationScope",
+                "Service catalog changes require manager approval"
+              ]
+            },
+            {
+              "domainId": "product",
+              "title": "Product",
+              "masterEntities": [
+                "Product"
+              ],
+              "sourceOfTruth": "inventoryService",
+              "consumers": [
+                "inventoryPage",
+                "salesCheckoutPage",
+                "checkInCheckoutWorkflow",
+                "inventoryAdjustmentWorkflow",
+                "recommendationAgent",
+                "recordSaleUsecase",
+                "adjustInventoryUsecase"
+              ],
+              "governanceRules": [
+                "Master product records are governed by inventoryCannotGoNegative and singleLocationScope",
+                "Product catalog changes require manager approval"
+              ]
+            },
+            {
+              "domainId": "commissionRule",
+              "title": "Commission rule",
+              "masterEntities": [
+                "CommissionRule"
+              ],
+              "sourceOfTruth": "commissionService",
+              "consumers": [
+                "staffPerformancePage",
+                "adminSettingsPage",
+                "commissionCalculationWorkflow",
+                "createStaffMemberUsecase",
+                "calculateCommissionUsecase",
+                "recordSaleUsecase",
+                "metricTablePerformance"
+              ],
+              "governanceRules": [
+                "Master commission rules are governed by commissionCalculationRequired and singleLocationScope",
+                "Commission rule changes require owner approval"
+              ]
+            }
+          ]
+        },
+        "questions": [
+          "Confirm the commission rule type (fixed %, tiered, or per-stylist custom) to finalize calculation logic.",
+          "Should upsell recommendations use only visit history or also current inventory and service availability?",
+          "Do you want separate usecase entities for create vs update actions on Customer, StaffMember, and Service, or a combined upsert usecase?",
+          "Should the check-in action enforce any additional rules (e.g., appointment must be booked and not cancelled/noShow) before transitioning to checkedIn?"
+        ],
+        "trace": [
+          "Inferred master data domains from ontology and approved artifacts: Customer, StaffMember, Service, Product, and CommissionRule.",
+          "Excluded transactional entities (Appointment, Sale, InventoryLedger, AvailabilitySlot) from MDM scope.",
+          "Mapped sourceOfTruth to logical domain services and linked consumer artifacts (pages, workflows, agents, usecases, metricTables) per domain.",
+          "Applied governance rules derived from solution rules: singleLocationScope, serviceDurationPriceRequired, inventoryCannotGoNegative, and commissionCalculationRequired."
+        ]
+      }
+    },
+    "status": "completed",
+    "stepId": 35,
+    "interaction": null,
+    "nextSteps": null
+  }
+}

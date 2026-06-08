@@ -1,0 +1,414 @@
+{
+  "savedAt": "2026-06-08T19:04:27.886Z",
+  "agentName": "agentPlanPageDefinition",
+  "stepId": 82,
+  "planning": null,
+  "status": "waiting_after_prompt",
+  "payload": {
+    "type": "flexible",
+    "result": {
+      "toolName": "submitPageDefinitionPlan",
+      "arguments": {
+        "status": "needs_input",
+        "result": {
+          "pageDefinition": {
+            "pageId": "appointmentBooking",
+            "pageName": "Book appointment",
+            "actor": "receptionist",
+            "purpose": "Select customer, staff, service, and time for a new appointment before confirmation.",
+            "capabilities": [
+              "bookAppointments"
+            ],
+            "flowRefs": {
+              "experienceFlows": [],
+              "entityLifecycles": [
+                "appointmentBooking"
+              ],
+              "taskWorkflows": [],
+              "automations": []
+            },
+            "pluginRefs": [],
+            "mdmRefs": [
+              "customer",
+              "staffMember",
+              "service"
+            ],
+            "pageInputs": [],
+            "navigationRefs": [
+              {
+                "direction": "inbound",
+                "pageId": "appointmentCalendar",
+                "trigger": "Book appointment"
+              },
+              {
+                "direction": "outbound",
+                "pageId": "appointmentConfirm",
+                "trigger": "Review appointment"
+              }
+            ],
+            "sections": [
+              {
+                "sectionName": "AppointmentSelections",
+                "mode": "edit",
+                "organisms": [
+                  {
+                    "organismName": "CustomerSelector",
+                    "purpose": "Search and select the customer for the appointment.",
+                    "userActions": [
+                      "searchCustomer",
+                      "selectCustomer"
+                    ],
+                    "requiredEntities": [
+                      "Customer"
+                    ],
+                    "readsFields": [
+                      "Customer.customerId",
+                      "Customer.fullName",
+                      "Customer.phone",
+                      "Customer.email"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": [
+                      "RULE_appointmentMustHaveCustomerStaffService",
+                      "RULE_singleLocationScope"
+                    ]
+                  },
+                  {
+                    "organismName": "StaffSelector",
+                    "purpose": "Choose the staff member who will perform the service.",
+                    "userActions": [
+                      "searchStaff",
+                      "selectStaff"
+                    ],
+                    "requiredEntities": [
+                      "StaffMember"
+                    ],
+                    "readsFields": [
+                      "StaffMember.staffId",
+                      "StaffMember.fullName",
+                      "StaffMember.role",
+                      "StaffMember.status"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": [
+                      "RULE_appointmentMustHaveCustomerStaffService",
+                      "RULE_singleLocationScope"
+                    ]
+                  },
+                  {
+                    "organismName": "ServiceSelector",
+                    "purpose": "Select the service to be performed.",
+                    "userActions": [
+                      "searchService",
+                      "selectService"
+                    ],
+                    "requiredEntities": [
+                      "Service"
+                    ],
+                    "readsFields": [
+                      "Service.serviceId",
+                      "Service.name",
+                      "Service.durationMinutes",
+                      "Service.price"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": [
+                      "RULE_appointmentMustHaveCustomerStaffService",
+                      "RULE_singleLocationScope"
+                    ]
+                  },
+                  {
+                    "organismName": "TimeSlotSelector",
+                    "purpose": "Choose an available time slot for the selected staff member and service duration.",
+                    "userActions": [
+                      "viewAvailableSlots",
+                      "selectTimeSlot"
+                    ],
+                    "requiredEntities": [
+                      "AvailabilitySlot"
+                    ],
+                    "readsFields": [
+                      "AvailabilitySlot.slotId",
+                      "AvailabilitySlot.startTime",
+                      "AvailabilitySlot.endTime",
+                      "AvailabilitySlot.status",
+                      "AvailabilitySlot.staffId"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": [
+                      "RULE_appointmentNoOverlapPerStaff",
+                      "RULE_singleLocationScope"
+                    ]
+                  }
+                ]
+              },
+              {
+                "sectionName": "ReviewAndContinue",
+                "mode": "review",
+                "organisms": [
+                  {
+                    "organismName": "AppointmentDraftSummary",
+                    "purpose": "Summarize selected customer, staff, service, and time before confirmation.",
+                    "userActions": [
+                      "reviewDraft"
+                    ],
+                    "requiredEntities": [
+                      "Appointment",
+                      "Customer",
+                      "StaffMember",
+                      "Service",
+                      "AvailabilitySlot"
+                    ],
+                    "readsFields": [
+                      "Appointment.customerId",
+                      "Appointment.staffId",
+                      "Appointment.serviceIds",
+                      "Appointment.startTime",
+                      "Appointment.endTime"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": [
+                      "RULE_appointmentMustHaveCustomerStaffService",
+                      "RULE_singleLocationScope"
+                    ]
+                  },
+                  {
+                    "organismName": "ProceedToConfirm",
+                    "purpose": "Proceed to the confirmation step with the selected appointment details.",
+                    "userActions": [
+                      "continueToConfirm"
+                    ],
+                    "requiredEntities": [
+                      "Appointment"
+                    ],
+                    "readsFields": [],
+                    "writesFields": [
+                      "Appointment.customerId",
+                      "Appointment.staffId",
+                      "Appointment.serviceIds",
+                      "Appointment.startTime",
+                      "Appointment.endTime"
+                    ],
+                    "rulesApplied": [
+                      "RULE_appointmentMustHaveCustomerStaffService",
+                      "RULE_singleLocationScope"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "bffCommands": [
+            {
+              "commandName": "queryCustomersForBooking",
+              "purpose": "Search customers for selection during appointment booking.",
+              "kind": "query",
+              "input": {
+                "searchText": "string?",
+                "limit": "number?",
+                "offset": "number?"
+              },
+              "output": {
+                "customers": [
+                  {
+                    "customerId": "string",
+                    "fullName": "string",
+                    "phone": "string",
+                    "email": "string"
+                  }
+                ]
+              },
+              "readsEntities": [
+                "Customer"
+              ],
+              "writesEntities": [],
+              "readsTables": [],
+              "writesTables": [],
+              "usecaseRefs": [],
+              "layerContract": {
+                "controllerLayer": "layer_2_controllers",
+                "mustCallLayer": "layer_3_usecases",
+                "directTableAccessForbidden": true
+              },
+              "rulesApplied": [
+                "RULE_singleLocationScope"
+              ]
+            },
+            {
+              "commandName": "queryStaffForBooking",
+              "purpose": "Search active staff members for appointment booking.",
+              "kind": "query",
+              "input": {
+                "searchText": "string?",
+                "limit": "number?",
+                "offset": "number?"
+              },
+              "output": {
+                "staff": [
+                  {
+                    "staffId": "string",
+                    "fullName": "string",
+                    "role": "string",
+                    "status": "string"
+                  }
+                ]
+              },
+              "readsEntities": [
+                "StaffMember"
+              ],
+              "writesEntities": [],
+              "readsTables": [],
+              "writesTables": [],
+              "usecaseRefs": [],
+              "layerContract": {
+                "controllerLayer": "layer_2_controllers",
+                "mustCallLayer": "layer_3_usecases",
+                "directTableAccessForbidden": true
+              },
+              "rulesApplied": [
+                "RULE_singleLocationScope"
+              ]
+            },
+            {
+              "commandName": "queryServicesForBooking",
+              "purpose": "Search services to add to the appointment.",
+              "kind": "query",
+              "input": {
+                "searchText": "string?",
+                "limit": "number?",
+                "offset": "number?"
+              },
+              "output": {
+                "services": [
+                  {
+                    "serviceId": "string",
+                    "name": "string",
+                    "durationMinutes": "number",
+                    "price": "number"
+                  }
+                ]
+              },
+              "readsEntities": [
+                "Service"
+              ],
+              "writesEntities": [],
+              "readsTables": [],
+              "writesTables": [],
+              "usecaseRefs": [],
+              "layerContract": {
+                "controllerLayer": "layer_2_controllers",
+                "mustCallLayer": "layer_3_usecases",
+                "directTableAccessForbidden": true
+              },
+              "rulesApplied": [
+                "RULE_singleLocationScope"
+              ]
+            },
+            {
+              "commandName": "queryAvailabilitySlotsForBooking",
+              "purpose": "List available time slots for the selected staff member and service duration.",
+              "kind": "query",
+              "input": {
+                "staffId": "string",
+                "serviceDurationMinutes": "number",
+                "date": "string"
+              },
+              "output": {
+                "slots": [
+                  {
+                    "slotId": "string",
+                    "staffId": "string",
+                    "startTime": "string",
+                    "endTime": "string",
+                    "status": "string"
+                  }
+                ]
+              },
+              "readsEntities": [
+                "AvailabilitySlot"
+              ],
+              "writesEntities": [],
+              "readsTables": [],
+              "writesTables": [],
+              "usecaseRefs": [],
+              "layerContract": {
+                "controllerLayer": "layer_2_controllers",
+                "mustCallLayer": "layer_3_usecases",
+                "directTableAccessForbidden": true
+              },
+              "rulesApplied": [
+                "RULE_appointmentNoOverlapPerStaff",
+                "RULE_singleLocationScope"
+              ]
+            },
+            {
+              "commandName": "createAppointmentDraft",
+              "purpose": "Prepare appointment details for confirmation.",
+              "kind": "mutation",
+              "input": {
+                "customerId": "string",
+                "staffId": "string",
+                "serviceIds": [
+                  "string"
+                ],
+                "startTime": "string",
+                "endTime": "string"
+              },
+              "output": {
+                "appointmentDraft": {
+                  "appointmentId": "string",
+                  "lifecycleState": "string",
+                  "customerId": "string",
+                  "staffId": "string",
+                  "serviceIds": [
+                    "string"
+                  ],
+                  "startTime": "string",
+                  "endTime": "string"
+                }
+              },
+              "readsEntities": [
+                "Customer",
+                "StaffMember",
+                "Service",
+                "AvailabilitySlot"
+              ],
+              "writesEntities": [
+                "Appointment",
+                "AvailabilitySlot"
+              ],
+              "readsTables": [],
+              "writesTables": [],
+              "usecaseRefs": [
+                "bookAppointmentUsecase"
+              ],
+              "layerContract": {
+                "controllerLayer": "layer_2_controllers",
+                "mustCallLayer": "layer_3_usecases",
+                "directTableAccessForbidden": true
+              },
+              "rulesApplied": [
+                "RULE_appointmentMustHaveCustomerStaffService",
+                "RULE_appointmentNoOverlapPerStaff",
+                "RULE_singleLocationScope"
+              ]
+            }
+          ]
+        },
+        "questions": [
+          "Which layer_3 usecases should the BFF use to search customers, staff, services, and availability slots for booking?",
+          "Is creating a draft appointment on this page expected to persist an Appointment in draft state, or should this page only pass selections to the confirmation page without persistence? If it persists, is there a dedicated usecase for draft creation separate from bookAppointmentUsecase?"
+        ],
+        "trace": [
+          "Planned appointmentBooking page for receptionist with selection and review sections based on capability bookAppointments and workflow appointmentBooking.",
+          "Added selection organisms for customer, staff, service, and time, plus review and continue actions, applying rules appointmentMustHaveCustomerStaffService, appointmentNoOverlapPerStaff, singleLocationScope.",
+          "Created BFF command stubs for selection queries and createAppointmentDraft from hints; missing concrete usecaseRefs for list/availability queries and draft creation behavior."
+        ]
+      }
+    },
+    "status": "completed",
+    "stepId": 83,
+    "interaction": null,
+    "nextSteps": null
+  }
+}

@@ -1,0 +1,252 @@
+export const performanceMetricsMetricTableDefinition = {
+  "schemaVersion": "2026-06-06",
+  "artifactType": "metricTable",
+  "artifactId": "performanceMetrics",
+  "moduleName": "barbershopPro",
+  "status": "draft",
+  "source": {
+    "agentName": "agentPlanMetricTableDefinition",
+    "stepId": 49,
+    "planId": "plan-metric-table-definition:performanceMetrics"
+  },
+  "data": {
+    "metricTableDefinition": {
+      "metricTableId": "performanceMetrics",
+      "tableName": "performance_metrics",
+      "moduleId": "barbershopPro",
+      "title": "Performance metrics",
+      "purpose": "Track staff commissions, service and product revenue, and sales performance for commission summaries and staff performance reviews.",
+      "tableKind": "metricTimeseries",
+      "storageEngine": "postgresTimescaleDB",
+      "layer": "layer_1_external",
+      "timeColumn": "recorded_at",
+      "columns": [
+        {
+          "name": "recorded_at",
+          "type": "timestamptz",
+          "nullable": false,
+          "description": "When the performance metric was recorded."
+        },
+        {
+          "name": "staff_member_id",
+          "type": "uuid",
+          "nullable": false,
+          "description": "Staff member who earned the commission or made the sale."
+        },
+        {
+          "name": "service_id",
+          "type": "uuid",
+          "nullable": true,
+          "description": "Service sold."
+        },
+        {
+          "name": "product_id",
+          "type": "uuid",
+          "nullable": true,
+          "description": "Product sold."
+        },
+        {
+          "name": "commission_rule_id",
+          "type": "uuid",
+          "nullable": true,
+          "description": "Commission rule applied."
+        },
+        {
+          "name": "commission_amount",
+          "type": "numeric",
+          "nullable": false,
+          "default": 0,
+          "description": "Commission earned by staff."
+        },
+        {
+          "name": "service_revenue",
+          "type": "numeric",
+          "nullable": false,
+          "default": 0,
+          "description": "Revenue from services."
+        },
+        {
+          "name": "product_revenue",
+          "type": "numeric",
+          "nullable": false,
+          "default": 0,
+          "description": "Revenue from retail products."
+        },
+        {
+          "name": "total_revenue",
+          "type": "numeric",
+          "nullable": false,
+          "default": 0,
+          "description": "Total revenue from services and products."
+        },
+        {
+          "name": "sale_count",
+          "type": "integer",
+          "nullable": false,
+          "default": 0,
+          "description": "Number of sales transactions."
+        },
+        {
+          "name": "units_sold",
+          "type": "integer",
+          "nullable": false,
+          "default": 0,
+          "description": "Number of product units sold."
+        }
+      ],
+      "dimensions": [
+        {
+          "dimensionId": "staffMember",
+          "column": "staff_member_id",
+          "type": "uuid",
+          "description": "Staff member who earned the commission or made the sale."
+        },
+        {
+          "dimensionId": "service",
+          "column": "service_id",
+          "type": "uuid",
+          "description": "Service sold."
+        },
+        {
+          "dimensionId": "product",
+          "column": "product_id",
+          "type": "uuid",
+          "description": "Product sold."
+        },
+        {
+          "dimensionId": "commissionRule",
+          "column": "commission_rule_id",
+          "type": "uuid",
+          "description": "Commission rule applied."
+        }
+      ],
+      "measures": [
+        {
+          "measureId": "commissionAmount",
+          "column": "commission_amount",
+          "aggregation": "sum",
+          "unit": "USD",
+          "description": "Commission earned by staff."
+        },
+        {
+          "measureId": "serviceRevenue",
+          "column": "service_revenue",
+          "aggregation": "sum",
+          "unit": "USD",
+          "description": "Revenue from services."
+        },
+        {
+          "measureId": "productRevenue",
+          "column": "product_revenue",
+          "aggregation": "sum",
+          "unit": "USD",
+          "description": "Revenue from retail products."
+        },
+        {
+          "measureId": "totalRevenue",
+          "column": "total_revenue",
+          "aggregation": "sum",
+          "unit": "USD",
+          "description": "Total revenue from services and products."
+        },
+        {
+          "measureId": "saleCount",
+          "column": "sale_count",
+          "aggregation": "sum",
+          "unit": "count",
+          "description": "Number of sales transactions."
+        },
+        {
+          "measureId": "unitsSold",
+          "column": "units_sold",
+          "aggregation": "sum",
+          "unit": "count",
+          "description": "Number of product units sold."
+        }
+      ],
+      "sourceWriteEvents": [
+        "recordSaleUsecase",
+        "calculateCommissionUsecase",
+        "createStaffMemberUsecase"
+      ],
+      "hypertable": {
+        "timeColumn": "recorded_at",
+        "chunkTimeInterval": "7 days",
+        "retentionPolicy": "2 years",
+        "compressionPolicy": "30 days",
+        "indexes": [
+          {
+            "indexName": "performance_metrics_recorded_at_idx",
+            "columns": [
+              "recorded_at"
+            ],
+            "purpose": "Time-range scans for performance metrics."
+          },
+          {
+            "indexName": "performance_metrics_staff_time_idx",
+            "columns": [
+              "staff_member_id",
+              "recorded_at"
+            ],
+            "purpose": "Filter metrics by staff member and time."
+          },
+          {
+            "indexName": "performance_metrics_service_time_idx",
+            "columns": [
+              "service_id",
+              "recorded_at"
+            ],
+            "purpose": "Filter metrics by service and time."
+          },
+          {
+            "indexName": "performance_metrics_product_time_idx",
+            "columns": [
+              "product_id",
+              "recorded_at"
+            ],
+            "purpose": "Filter metrics by product and time."
+          },
+          {
+            "indexName": "performance_metrics_commission_rule_time_idx",
+            "columns": [
+              "commission_rule_id",
+              "recorded_at"
+            ],
+            "purpose": "Filter metrics by commission rule and time."
+          }
+        ]
+      },
+      "updatePolicy": {
+        "updatedByLayer": "layer_3_usecases",
+        "pagesMayUpdate": false,
+        "controllersMayUpdate": false,
+        "usecaseRefs": [
+          "recordSaleUsecase",
+          "calculateCommissionUsecase",
+          "createStaffMemberUsecase"
+        ]
+      },
+      "accessPolicy": {
+        "directAccessAllowedFor": [
+          "layer_3_usecases"
+        ],
+        "forbiddenFor": [
+          "pages",
+          "layer_2_controllers",
+          "agents"
+        ]
+      },
+      "rulesApplied": [
+        "singleLocationScope",
+        "commissionCalculationRequired"
+      ]
+    },
+    "defsPlan": {
+      "fileName": "tables/performanceMetrics.defs.ts",
+      "exportName": "performanceMetricsMetricTableDefinition",
+      "saveAsDefs": true
+    }
+  }
+} as const;
+
+export default performanceMetricsMetricTableDefinition;

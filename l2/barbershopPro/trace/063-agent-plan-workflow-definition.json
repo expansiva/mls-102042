@@ -1,0 +1,199 @@
+{
+  "savedAt": "2026-06-08T19:01:05.712Z",
+  "agentName": "agentPlanWorkflowDefinition",
+  "stepId": 63,
+  "planning": null,
+  "status": "waiting_after_prompt",
+  "payload": {
+    "type": "flexible",
+    "result": {
+      "toolName": "submitWorkflowDefinitionPlan",
+      "arguments": {
+        "status": "ok",
+        "result": {
+          "workflowDefinition": {
+            "workflowId": "upsellSuggestion",
+            "title": "Upsell suggestion",
+            "purpose": "Suggest relevant add-on services to a customer based on their visit history and the current service catalog.",
+            "executionMode": "taskWorkflow",
+            "createsTask": false,
+            "taskConfig": {
+              "taskTitleTemplate": "",
+              "assigneeRules": [],
+              "slaRules": [],
+              "taskRoomRequired": false
+            },
+            "actors": [
+              "receptionist"
+            ],
+            "states": [
+              {
+                "stateId": "idle",
+                "description": "No upsell suggestion requested yet."
+              },
+              {
+                "stateId": "suggestionRequested",
+                "description": "Upsell suggestion requested and awaiting response."
+              },
+              {
+                "stateId": "suggestionReady",
+                "description": "Upsell suggestion is available to view."
+              },
+              {
+                "stateId": "suggestionError",
+                "description": "Upsell suggestion request failed."
+              }
+            ],
+            "transitions": [
+              {
+                "from": "idle",
+                "to": "suggestionRequested",
+                "trigger": "requestUpsellSuggestion",
+                "actor": "receptionist",
+                "conditions": [
+                  "singleLocationScope"
+                ],
+                "actions": [],
+                "rulesApplied": [
+                  "singleLocationScope"
+                ]
+              },
+              {
+                "from": "suggestionRequested",
+                "to": "suggestionReady",
+                "trigger": "receiveUpsellSuggestion",
+                "actor": "receptionist",
+                "conditions": [
+                  "singleLocationScope"
+                ],
+                "actions": [],
+                "rulesApplied": [
+                  "singleLocationScope"
+                ]
+              },
+              {
+                "from": "suggestionRequested",
+                "to": "suggestionError",
+                "trigger": "upsellSuggestionFailed",
+                "actor": "receptionist",
+                "conditions": [
+                  "singleLocationScope"
+                ],
+                "actions": [],
+                "rulesApplied": [
+                  "singleLocationScope"
+                ]
+              },
+              {
+                "from": "suggestionReady",
+                "to": "idle",
+                "trigger": "dismissUpsellSuggestion",
+                "actor": "receptionist",
+                "conditions": [
+                  "singleLocationScope"
+                ],
+                "actions": [],
+                "rulesApplied": [
+                  "singleLocationScope"
+                ]
+              },
+              {
+                "from": "suggestionError",
+                "to": "idle",
+                "trigger": "retryUpsellSuggestion",
+                "actor": "receptionist",
+                "conditions": [
+                  "singleLocationScope"
+                ],
+                "actions": [],
+                "rulesApplied": [
+                  "singleLocationScope"
+                ]
+              }
+            ],
+            "requiredEntities": [
+              "Customer",
+              "Service",
+              "Sale"
+            ],
+            "persistenceRefs": [],
+            "usecaseRefs": [
+              "requestUpsellSuggestionUsecase"
+            ],
+            "metricRefs": [],
+            "userActions": [
+              "requestUpsellSuggestion",
+              "viewUpsellSuggestion",
+              "dismissUpsellSuggestion",
+              "retryUpsellSuggestion"
+            ],
+            "relatedPages": [],
+            "relatedAgents": [
+              "recommendationAgent"
+            ],
+            "relatedPlugins": [],
+            "rulesApplied": [
+              "singleLocationScope"
+            ],
+            "implementationSuggestions": [
+              {
+                "suggestionId": "integrateRecommendationAgent",
+                "title": "Integrate with recommendation agent",
+                "priority": "soon",
+                "description": "Leverage the recommendation agent to generate contextual upsell suggestions using customer and service data, invoked inside requestUpsellSuggestionUsecase.",
+                "tradeoff": "Requires coordination with the agent team and may increase response latency."
+              },
+              {
+                "suggestionId": "documentNoTaskFlow",
+                "title": "Document no-task workflow handling",
+                "priority": "soon",
+                "description": "Since createsTask is false, keep upsell suggestions as an inline assistant response without creating a receptionist task; ensure the UI displays suggestions immediately after the use case response.",
+                "tradeoff": "No task reminders if the receptionist overlooks the suggestion."
+              }
+            ],
+            "workflowScope": "singleModule",
+            "moduleRefs": [
+              "barbershopPro"
+            ],
+            "pageRefsByModule": [],
+            "entityRefsByModule": [
+              {
+                "moduleId": "barbershopPro",
+                "entity": "Customer"
+              },
+              {
+                "moduleId": "barbershopPro",
+                "entity": "Service"
+              },
+              {
+                "moduleId": "barbershopPro",
+                "entity": "Sale"
+              }
+            ],
+            "writesArtifacts": [
+              {
+                "moduleId": "barbershopPro",
+                "artifactType": "workflow",
+                "artifactId": "upsellSuggestion"
+              }
+            ]
+          },
+          "defsPlan": {
+            "fileName": "workflows/upsellSuggestion.defs.ts",
+            "exportName": "upsellSuggestionDef",
+            "saveAsDefs": true
+          }
+        },
+        "questions": [],
+        "trace": [
+          "createsTask is false in index; taskConfig left empty and handling noted in implementationSuggestions.",
+          "No module-owned tables provided, so persistenceRefs remain empty and actions do not write entity fields."
+        ]
+      }
+    },
+    "status": "completed",
+    "stepId": 64,
+    "interaction": null,
+    "nextSteps": null
+  }
+}

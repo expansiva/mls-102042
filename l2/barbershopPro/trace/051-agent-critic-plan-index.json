@@ -1,0 +1,53 @@
+{
+  "savedAt": "2026-06-08T18:58:35.870Z",
+  "agentName": "agentCriticPlanIndex",
+  "stepId": 51,
+  "planning": {
+    "planId": "plan-index-critic:usecasePlan:1",
+    "dependsOn": [
+      "plan-usecase-entities"
+    ],
+    "executionMode": "sequential",
+    "executionHost": "client"
+  },
+  "status": "waiting_after_prompt",
+  "payload": {
+    "type": "flexible",
+    "result": {
+      "toolName": "submitPlanIndexCritique",
+      "arguments": {
+        "status": "needs_input",
+        "result": {
+          "approved": false,
+          "errors": [
+            {
+              "code": "usecase.metricUpdate.missing",
+              "message": "adjustInventoryUsecase writes base transactional table inventory_ledger_entry but does not update any related metric table (expected operations_metrics).",
+              "path": "usecases[13]"
+            },
+            {
+              "code": "usecase.writeScope.invalid",
+              "message": "requestWalkInSlotsUsecase is a read-only suggestion command but declares writes to availability_slot and operations_metrics.",
+              "path": "usecases[18]"
+            }
+          ],
+          "warnings": []
+        },
+        "questions": [
+          "Should adjustInventoryUsecase update operations_metrics when writing inventory_ledger_entry?",
+          "Should requestWalkInSlotsUsecase be read-only and remove writes to availability_slot and operations_metrics?"
+        ],
+        "trace": [
+          "Verified all user actions map to a usecase by usecaseId.",
+          "Checked base transactional table writes against metric table updates.",
+          "Identified adjustInventoryUsecase writes inventory_ledger_entry without updating any metric table.",
+          "Identified requestWalkInSlotsUsecase incorrectly declares writes to availability_slot and operations_metrics despite being a suggestion command."
+        ]
+      }
+    },
+    "status": "completed",
+    "stepId": 52,
+    "interaction": null,
+    "nextSteps": null
+  }
+}

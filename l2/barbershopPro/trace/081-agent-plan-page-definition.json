@@ -1,0 +1,202 @@
+{
+  "savedAt": "2026-06-08T19:04:00.905Z",
+  "agentName": "agentPlanPageDefinition",
+  "stepId": 81,
+  "planning": null,
+  "status": "waiting_after_prompt",
+  "payload": {
+    "type": "flexible",
+    "result": {
+      "toolName": "submitPageDefinitionPlan",
+      "arguments": {
+        "status": "needs_input",
+        "result": {
+          "pageDefinition": {
+            "pageId": "appointmentCalendar",
+            "pageName": "Appointment calendar",
+            "actor": "receptionist",
+            "purpose": "View appointments and start booking or changes.",
+            "capabilities": [
+              "bookAppointments"
+            ],
+            "flowRefs": {
+              "experienceFlows": [],
+              "entityLifecycles": [
+                "appointmentBooking"
+              ],
+              "taskWorkflows": [],
+              "automations": []
+            },
+            "pluginRefs": [],
+            "mdmRefs": [
+              "customer",
+              "staffMember",
+              "service"
+            ],
+            "pageInputs": [
+              {
+                "name": "dateRange",
+                "type": "DateRange",
+                "required": false,
+                "sources": [
+                  "queryParam",
+                  "sessionDefault"
+                ],
+                "description": "Date range to load on the calendar view."
+              }
+            ],
+            "navigationRefs": [
+              {
+                "direction": "outbound",
+                "pageId": "appointmentBooking",
+                "trigger": "Book appointment"
+              },
+              {
+                "direction": "outbound",
+                "pageId": "appointmentReschedule",
+                "trigger": "Reschedule appointment"
+              },
+              {
+                "direction": "outbound",
+                "pageId": "appointmentCancel",
+                "trigger": "Cancel appointment"
+              },
+              {
+                "direction": "outbound",
+                "pageId": "appointmentDetail",
+                "trigger": "View appointment"
+              }
+            ],
+            "sections": [
+              {
+                "sectionName": "Calendar overview",
+                "mode": "view",
+                "organisms": [
+                  {
+                    "organismName": "AppointmentCalendar",
+                    "purpose": "Show scheduled appointments alongside staff availability for the selected range.",
+                    "userActions": [
+                      "View appointment",
+                      "Select time slot",
+                      "Change date range"
+                    ],
+                    "requiredEntities": [
+                      "Appointment",
+                      "AvailabilitySlot",
+                      "StaffMember",
+                      "Service",
+                      "Customer"
+                    ],
+                    "readsFields": [
+                      "Appointment.appointmentId",
+                      "Appointment.startTime",
+                      "Appointment.endTime",
+                      "Appointment.lifecycleState",
+                      "Appointment.customerId",
+                      "Appointment.staffMemberId",
+                      "Appointment.serviceId",
+                      "AvailabilitySlot.slotId",
+                      "AvailabilitySlot.startTime",
+                      "AvailabilitySlot.endTime",
+                      "AvailabilitySlot.status",
+                      "StaffMember.staffMemberId",
+                      "StaffMember.displayName",
+                      "Service.serviceId",
+                      "Service.name",
+                      "Customer.customerId",
+                      "Customer.fullName"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": [
+                      "appointmentNoOverlapPerStaff",
+                      "singleLocationScope"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "bffCommands": [
+            {
+              "commandName": "getAppointmentCalendar",
+              "purpose": "Load calendar appointments and staff availability for the selected date range.",
+              "kind": "query",
+              "input": {
+                "dateRange": {
+                  "start": "ISO-8601",
+                  "end": "ISO-8601"
+                }
+              },
+              "output": {
+                "appointments": [
+                  {
+                    "appointmentId": "string",
+                    "startTime": "ISO-8601",
+                    "endTime": "ISO-8601",
+                    "lifecycleState": "string",
+                    "customer": {
+                      "customerId": "string",
+                      "fullName": "string"
+                    },
+                    "staffMember": {
+                      "staffMemberId": "string",
+                      "displayName": "string"
+                    },
+                    "service": {
+                      "serviceId": "string",
+                      "name": "string"
+                    }
+                  }
+                ],
+                "availabilitySummary": [
+                  {
+                    "staffMemberId": "string",
+                    "date": "YYYY-MM-DD",
+                    "availableSlots": 0,
+                    "bookedSlots": 0
+                  }
+                ]
+              },
+              "readsEntities": [
+                "Appointment",
+                "AvailabilitySlot",
+                "StaffMember",
+                "Service",
+                "Customer"
+              ],
+              "writesEntities": [],
+              "readsTables": [
+                "appointment",
+                "availability_slot"
+              ],
+              "writesTables": [],
+              "usecaseRefs": [
+                "getAppointmentCalendarUsecase"
+              ],
+              "layerContract": {
+                "controllerLayer": "layer_2_controllers",
+                "mustCallLayer": "layer_3_usecases",
+                "directTableAccessForbidden": true
+              },
+              "rulesApplied": [
+                "appointmentNoOverlapPerStaff",
+                "singleLocationScope"
+              ]
+            }
+          ]
+        },
+        "questions": [
+          "Which layer_3 use case should serve the calendar read (e.g., should we create getAppointmentCalendarUsecase), or is there an existing read use case to reference?"
+        ],
+        "trace": [
+          "Built appointmentCalendar from pageIndexItem capabilities and bffCommandHints.",
+          "Assumed a read use case getAppointmentCalendarUsecase is needed to satisfy controller-to-usecase contract."
+        ]
+      }
+    },
+    "status": "completed",
+    "stepId": 82,
+    "interaction": null,
+    "nextSteps": null
+  }
+}

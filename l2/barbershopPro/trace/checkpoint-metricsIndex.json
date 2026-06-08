@@ -1,0 +1,465 @@
+{
+  "schemaVersion": "2026-06-06",
+  "artifactType": "indexCheckpoint",
+  "indexName": "metricsIndex",
+  "moduleName": "barbershopPro",
+  "status": "frozen",
+  "approvedAt": "2026-06-08T18:55:14.583Z",
+  "source": {
+    "agentName": "agentPlanMetricsIndex",
+    "stepId": 45,
+    "planId": "plan-index-critic:metricsIndex:1"
+  },
+  "healthReport": {
+    "localErrors": [],
+    "localWarnings": [
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table operationsMetrics sources unknown base table appointment",
+        "path": "metricTables[0]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table operationsMetrics sources unknown base table sale",
+        "path": "metricTables[0]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table operationsMetrics sources unknown base table availability_slot",
+        "path": "metricTables[0]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table operationsMetrics sources unknown base table staff_member",
+        "path": "metricTables[0]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table performanceMetrics sources unknown base table sale",
+        "path": "metricTables[1]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table performanceMetrics sources unknown base table commission_rule",
+        "path": "metricTables[1]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table performanceMetrics sources unknown base table staff_member",
+        "path": "metricTables[1]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table performanceMetrics sources unknown base table product",
+        "path": "metricTables[1]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table performanceMetrics sources unknown base table service",
+        "path": "metricTables[1]"
+      }
+    ],
+    "criticErrors": [],
+    "criticWarnings": [
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table operationsMetrics sources unknown base table appointment",
+        "path": "metricTables[0]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table operationsMetrics sources unknown base table sale",
+        "path": "metricTables[0]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table operationsMetrics sources unknown base table availability_slot",
+        "path": "metricTables[0]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table operationsMetrics sources unknown base table staff_member",
+        "path": "metricTables[0]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table performanceMetrics sources unknown base table sale",
+        "path": "metricTables[1]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table performanceMetrics sources unknown base table commission_rule",
+        "path": "metricTables[1]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table performanceMetrics sources unknown base table staff_member",
+        "path": "metricTables[1]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table performanceMetrics sources unknown base table product",
+        "path": "metricTables[1]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceBaseTable.unknown",
+        "message": "metric table performanceMetrics sources unknown base table service",
+        "path": "metricTables[1]"
+      },
+      {
+        "severity": "warning",
+        "code": "metrics.sourceWriteEvent.irrelevant",
+        "message": "metric table performanceMetrics lists createStaffMemberUsecase as a source write event, but creating a staff member does not generate commission, revenue, or sales measures",
+        "path": "metricTables[1].sourceWriteEvents"
+      }
+    ],
+    "attempts": 1,
+    "notes": []
+  },
+  "index": {
+    "runId": "provider-tool-call",
+    "stepId": "14-plan-metrics-index",
+    "schemaVersion": "2026-06-02",
+    "status": "ok",
+    "result": {
+      "metricsPlan": {
+        "enabled": true,
+        "storageEngine": "postgresTimescaleDB",
+        "moduleId": "barbershopPro",
+        "title": "BarbershopPro metrics plan",
+        "description": "Operational and performance time-series metrics for bookings, revenue, staff utilization, and commissions.",
+        "updateResponsibility": "layer_3_usecases",
+        "derivationSources": [
+          "baseTableUpdates",
+          "lifecycleTransitions",
+          "operationalRisks"
+        ]
+      },
+      "metricTables": [
+        {
+          "metricTableId": "operationsMetrics",
+          "tableName": "operations_metrics",
+          "title": "Operations metrics",
+          "purpose": "Track daily bookings, revenue, staff utilization, and appointment lifecycle trends to power the owner dashboard and operational summaries.",
+          "storageEngine": "postgresTimescaleDB",
+          "sourceBaseTables": [
+            "appointment",
+            "sale",
+            "availability_slot",
+            "staff_member"
+          ],
+          "sourceEntities": [
+            "Appointment",
+            "Sale",
+            "AvailabilitySlot",
+            "StaffMember"
+          ],
+          "sourceWriteEvents": [
+            "createAppointmentUsecase",
+            "rescheduleAppointmentUsecase",
+            "cancelAppointmentUsecase",
+            "checkInAppointmentUsecase",
+            "completeAppointmentUsecase",
+            "recordSaleUsecase",
+            "updateStaffScheduleUsecase"
+          ],
+          "timeColumn": "recorded_at",
+          "dimensions": [
+            {
+              "dimensionId": "staffMember",
+              "column": "staff_member_id",
+              "type": "uuid",
+              "description": "Staff member associated with the metric event."
+            },
+            {
+              "dimensionId": "service",
+              "column": "service_id",
+              "type": "uuid",
+              "description": "Service associated with the appointment or sale."
+            },
+            {
+              "dimensionId": "appointmentStatus",
+              "column": "appointment_status",
+              "type": "text",
+              "description": "Lifecycle status of the appointment."
+            },
+            {
+              "dimensionId": "metricCategory",
+              "column": "metric_category",
+              "type": "text",
+              "description": "Category of the metric: booking, sale, utilization, cancellation, noShow."
+            }
+          ],
+          "measures": [
+            {
+              "measureId": "bookingCount",
+              "column": "booking_count",
+              "type": "integer",
+              "aggregation": "sum",
+              "unit": "count",
+              "description": "Number of bookings."
+            },
+            {
+              "measureId": "revenue",
+              "column": "revenue",
+              "type": "numeric",
+              "aggregation": "sum",
+              "unit": "USD",
+              "description": "Revenue from services and products."
+            },
+            {
+              "measureId": "utilizationMinutes",
+              "column": "utilization_minutes",
+              "type": "integer",
+              "aggregation": "sum",
+              "unit": "minutes",
+              "description": "Booked service minutes."
+            },
+            {
+              "measureId": "availableMinutes",
+              "column": "available_minutes",
+              "type": "integer",
+              "aggregation": "sum",
+              "unit": "minutes",
+              "description": "Available staff minutes."
+            },
+            {
+              "measureId": "cancellationCount",
+              "column": "cancellation_count",
+              "type": "integer",
+              "aggregation": "sum",
+              "unit": "count",
+              "description": "Number of cancelled appointments."
+            },
+            {
+              "measureId": "noShowCount",
+              "column": "no_show_count",
+              "type": "integer",
+              "aggregation": "sum",
+              "unit": "count",
+              "description": "Number of no-show appointments."
+            }
+          ],
+          "aggregationWindows": [
+            "1 hour",
+            "1 day",
+            "1 week",
+            "1 month"
+          ],
+          "retentionPolicy": "1 year",
+          "priority": "now",
+          "rulesApplied": [
+            "singleLocationScope"
+          ],
+          "reason": "Powers today’s bookings, daily revenue, and staff utilization KPIs."
+        },
+        {
+          "metricTableId": "performanceMetrics",
+          "tableName": "performance_metrics",
+          "title": "Performance metrics",
+          "purpose": "Track staff commissions, service and product revenue, and sales performance for commission summaries and staff performance reviews.",
+          "storageEngine": "postgresTimescaleDB",
+          "sourceBaseTables": [
+            "sale",
+            "commission_rule",
+            "staff_member",
+            "product",
+            "service"
+          ],
+          "sourceEntities": [
+            "Sale",
+            "CommissionRule",
+            "StaffMember",
+            "Product",
+            "Service"
+          ],
+          "sourceWriteEvents": [
+            "recordSaleUsecase",
+            "calculateCommissionUsecase",
+            "createStaffMemberUsecase"
+          ],
+          "timeColumn": "recorded_at",
+          "dimensions": [
+            {
+              "dimensionId": "staffMember",
+              "column": "staff_member_id",
+              "type": "uuid",
+              "description": "Staff member who earned the commission or made the sale."
+            },
+            {
+              "dimensionId": "service",
+              "column": "service_id",
+              "type": "uuid",
+              "description": "Service sold."
+            },
+            {
+              "dimensionId": "product",
+              "column": "product_id",
+              "type": "uuid",
+              "description": "Product sold."
+            },
+            {
+              "dimensionId": "commissionRule",
+              "column": "commission_rule_id",
+              "type": "uuid",
+              "description": "Commission rule applied."
+            }
+          ],
+          "measures": [
+            {
+              "measureId": "commissionAmount",
+              "column": "commission_amount",
+              "type": "numeric",
+              "aggregation": "sum",
+              "unit": "USD",
+              "description": "Commission earned by staff."
+            },
+            {
+              "measureId": "serviceRevenue",
+              "column": "service_revenue",
+              "type": "numeric",
+              "aggregation": "sum",
+              "unit": "USD",
+              "description": "Revenue from services."
+            },
+            {
+              "measureId": "productRevenue",
+              "column": "product_revenue",
+              "type": "numeric",
+              "aggregation": "sum",
+              "unit": "USD",
+              "description": "Revenue from retail products."
+            },
+            {
+              "measureId": "totalRevenue",
+              "column": "total_revenue",
+              "type": "numeric",
+              "aggregation": "sum",
+              "unit": "USD",
+              "description": "Total revenue from services and products."
+            },
+            {
+              "measureId": "saleCount",
+              "column": "sale_count",
+              "type": "integer",
+              "aggregation": "sum",
+              "unit": "count",
+              "description": "Number of sales transactions."
+            },
+            {
+              "measureId": "unitsSold",
+              "column": "units_sold",
+              "type": "integer",
+              "aggregation": "sum",
+              "unit": "count",
+              "description": "Number of product units sold."
+            }
+          ],
+          "aggregationWindows": [
+            "1 day",
+            "1 week",
+            "1 month",
+            "1 quarter"
+          ],
+          "retentionPolicy": "2 years",
+          "priority": "now",
+          "rulesApplied": [
+            "singleLocationScope",
+            "commissionCalculationRequired"
+          ],
+          "reason": "Powers commission totals and staff performance summaries."
+        }
+      ],
+      "dashboardPages": [
+        {
+          "metricDashboardId": "adminMetricsDashboard",
+          "title": "Admin metrics dashboard",
+          "description": "Admin-only dashboard for monitoring bookings, revenue, staff utilization, and performance KPIs.",
+          "actor": "owner",
+          "accessPolicy": "admin",
+          "priority": "now",
+          "sources": [
+            "operationsMetrics",
+            "performanceMetrics"
+          ],
+          "widgets": [
+            {
+              "widgetId": "dailyRevenue",
+              "title": "Daily revenue",
+              "metricId": "revenue",
+              "type": "lineChart",
+              "sourceMetricTable": "operationsMetrics"
+            },
+            {
+              "widgetId": "todaysBookings",
+              "title": "Today's bookings",
+              "metricId": "bookingCount",
+              "type": "stat",
+              "sourceMetricTable": "operationsMetrics"
+            },
+            {
+              "widgetId": "staffUtilization",
+              "title": "Staff utilization",
+              "metricId": "utilizationMinutes",
+              "type": "barChart",
+              "sourceMetricTable": "operationsMetrics"
+            },
+            {
+              "widgetId": "appointmentStatusBreakdown",
+              "title": "Appointment status breakdown",
+              "metricId": "bookingCount",
+              "type": "pieChart",
+              "sourceMetricTable": "operationsMetrics"
+            },
+            {
+              "widgetId": "commissionsByStaff",
+              "title": "Commissions by staff",
+              "metricId": "commissionAmount",
+              "type": "barChart",
+              "sourceMetricTable": "performanceMetrics"
+            },
+            {
+              "widgetId": "productSalesTrend",
+              "title": "Product sales trend",
+              "metricId": "productRevenue",
+              "type": "lineChart",
+              "sourceMetricTable": "performanceMetrics"
+            }
+          ],
+          "rulesApplied": [
+            "singleLocationScope"
+          ]
+        }
+      ]
+    },
+    "questions": [
+      "Should utilization metrics account for scheduled breaks and blocked slots, or only booked versus total available hours?",
+      "Is hourly aggregation sufficient for real-time dashboard updates, or do you need near-real-time metric ingestion?"
+    ],
+    "trace": [
+      "Planned two postgresTimescaleDB metric tables: operationsMetrics and performanceMetrics.",
+      "Mapped sourceWriteEvents to layer_3_usecases including appointment lifecycle transitions, sales recording, and commission calculations.",
+      "Configured dimensions and measures for bookings, revenue, utilization, cancellations, commissions, and product sales.",
+      "Created an admin-only metrics dashboard with widgets sourcing both metric tables.",
+      "Aligned retention policies and aggregation windows with operational and performance reporting needs."
+    ]
+  }
+}

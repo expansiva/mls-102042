@@ -1,0 +1,246 @@
+{
+  "savedAt": "2026-06-08T19:03:39.880Z",
+  "agentName": "agentPlanPageDefinition",
+  "stepId": 76,
+  "planning": null,
+  "status": "waiting_after_prompt",
+  "payload": {
+    "type": "flexible",
+    "result": {
+      "toolName": "submitPageDefinitionPlan",
+      "arguments": {
+        "status": "ok",
+        "result": {
+          "pageDefinition": {
+            "pageId": "staffCreate",
+            "pageName": "New staff member",
+            "actor": "manager",
+            "purpose": "Add a new staff member to the roster.",
+            "capabilities": [
+              "manageStaff"
+            ],
+            "flowRefs": {
+              "experienceFlows": [],
+              "entityLifecycles": [],
+              "taskWorkflows": [],
+              "automations": []
+            },
+            "pluginRefs": [],
+            "mdmRefs": [
+              "staffMember"
+            ],
+            "pageInputs": [],
+            "navigationRefs": [
+              {
+                "direction": "inbound",
+                "pageId": "staffList",
+                "trigger": "New staff member"
+              },
+              {
+                "direction": "outbound",
+                "pageId": "staffList",
+                "trigger": "Staff member created",
+                "description": "Return to staff list after successful creation."
+              }
+            ],
+            "sections": [
+              {
+                "sectionName": "staffIdentity",
+                "mode": "edit",
+                "organisms": [
+                  {
+                    "organismName": "staffIdentityForm",
+                    "purpose": "Capture staff member identity and contact details.",
+                    "userActions": [
+                      "Enter name",
+                      "Enter contact info",
+                      "Select status"
+                    ],
+                    "requiredEntities": [
+                      "StaffMember"
+                    ],
+                    "readsFields": [
+                      "StaffMember.firstName",
+                      "StaffMember.lastName",
+                      "StaffMember.email",
+                      "StaffMember.phone",
+                      "StaffMember.status"
+                    ],
+                    "writesFields": [
+                      "StaffMember.firstName",
+                      "StaffMember.lastName",
+                      "StaffMember.email",
+                      "StaffMember.phone",
+                      "StaffMember.status"
+                    ],
+                    "rulesApplied": [
+                      "RULE_singleLocationScope"
+                    ]
+                  }
+                ]
+              },
+              {
+                "sectionName": "roleAndCommission",
+                "mode": "edit",
+                "organisms": [
+                  {
+                    "organismName": "roleAssignmentForm",
+                    "purpose": "Assign role and permissions for the staff member.",
+                    "userActions": [
+                      "Select role",
+                      "Set permissions scope"
+                    ],
+                    "requiredEntities": [
+                      "StaffMember"
+                    ],
+                    "readsFields": [
+                      "StaffMember.role",
+                      "StaffMember.permissionsScope"
+                    ],
+                    "writesFields": [
+                      "StaffMember.role",
+                      "StaffMember.permissionsScope"
+                    ],
+                    "rulesApplied": [
+                      "RULE_singleLocationScope"
+                    ]
+                  },
+                  {
+                    "organismName": "commissionSettingsForm",
+                    "purpose": "Configure commission rule for the staff member.",
+                    "userActions": [
+                      "Select commission type",
+                      "Set commission rate",
+                      "Set commission effective date"
+                    ],
+                    "requiredEntities": [
+                      "CommissionRule"
+                    ],
+                    "readsFields": [
+                      "CommissionRule.type",
+                      "CommissionRule.rate",
+                      "CommissionRule.effectiveDate"
+                    ],
+                    "writesFields": [
+                      "CommissionRule.type",
+                      "CommissionRule.rate",
+                      "CommissionRule.effectiveDate"
+                    ],
+                    "rulesApplied": [
+                      "RULE_singleLocationScope"
+                    ]
+                  }
+                ]
+              },
+              {
+                "sectionName": "createActions",
+                "mode": "create",
+                "organisms": [
+                  {
+                    "organismName": "createStaffMemberAction",
+                    "purpose": "Submit staff member creation.",
+                    "userActions": [
+                      "Create staff member"
+                    ],
+                    "requiredEntities": [
+                      "StaffMember",
+                      "CommissionRule"
+                    ],
+                    "readsFields": [
+                      "StaffMember.firstName",
+                      "StaffMember.lastName",
+                      "StaffMember.email",
+                      "StaffMember.phone",
+                      "StaffMember.status",
+                      "StaffMember.role",
+                      "StaffMember.permissionsScope",
+                      "CommissionRule.type",
+                      "CommissionRule.rate",
+                      "CommissionRule.effectiveDate"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": [
+                      "RULE_singleLocationScope"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "bffCommands": [
+            {
+              "commandName": "createStaffMember",
+              "purpose": "Create a staff member record.",
+              "kind": "command",
+              "input": {
+                "staffMember": {
+                  "firstName": "string",
+                  "lastName": "string",
+                  "email": "string",
+                  "phone": "string",
+                  "status": "string",
+                  "role": "string",
+                  "permissionsScope": "string"
+                },
+                "commissionRule": {
+                  "type": "string",
+                  "rate": "number",
+                  "effectiveDate": "string"
+                }
+              },
+              "output": {
+                "staffMemberId": "string",
+                "staffMemberProfile": {
+                  "staffMemberId": "string",
+                  "firstName": "string",
+                  "lastName": "string",
+                  "role": "string",
+                  "status": "string"
+                },
+                "commissionRuleId": "string"
+              },
+              "readsEntities": [
+                "StaffMember",
+                "CommissionRule"
+              ],
+              "writesEntities": [
+                "StaffMember",
+                "CommissionRule"
+              ],
+              "readsTables": [
+                "staff_member",
+                "commission_rule"
+              ],
+              "writesTables": [
+                "staff_member",
+                "commission_rule",
+                "performance_metrics"
+              ],
+              "usecaseRefs": [
+                "createStaffMemberUsecase"
+              ],
+              "layerContract": {
+                "controllerLayer": "layer_2_controllers",
+                "mustCallLayer": "layer_3_usecases",
+                "directTableAccessForbidden": true
+              },
+              "rulesApplied": [
+                "RULE_singleLocationScope"
+              ]
+            }
+          ]
+        },
+        "questions": [],
+        "trace": [
+          "Planned staffCreate page from pageIndexItem and usecase createStaffMemberUsecase.",
+          "Derived three sections for identity, role/commission settings, and submit action.",
+          "Mapped BFF command createStaffMember to usecase and entities StaffMember and CommissionRule."
+        ]
+      }
+    },
+    "status": "completed",
+    "stepId": 77,
+    "interaction": null,
+    "nextSteps": null
+  }
+}
