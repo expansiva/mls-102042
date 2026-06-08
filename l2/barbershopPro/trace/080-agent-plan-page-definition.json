@@ -1,0 +1,179 @@
+{
+  "savedAt": "2026-06-08T19:04:08.960Z",
+  "agentName": "agentPlanPageDefinition",
+  "stepId": 80,
+  "planning": null,
+  "status": "waiting_after_prompt",
+  "payload": {
+    "type": "flexible",
+    "result": {
+      "toolName": "submitPageDefinitionPlan",
+      "arguments": {
+        "status": "needs_input",
+        "result": {
+          "pageDefinition": {
+            "pageId": "serviceDetail",
+            "pageName": "Service details",
+            "actor": "manager",
+            "purpose": "Review and update service details.",
+            "capabilities": [
+              "manageServices"
+            ],
+            "flowRefs": {
+              "experienceFlows": [],
+              "entityLifecycles": [],
+              "taskWorkflows": [],
+              "automations": []
+            },
+            "pluginRefs": [],
+            "mdmRefs": [
+              "service"
+            ],
+            "pageInputs": [
+              {
+                "name": "serviceId",
+                "type": "string",
+                "required": true,
+                "sources": [
+                  "routeParam"
+                ],
+                "description": "Identifier of the service to view and update.",
+                "entityRef": "Service",
+                "fieldRef": "serviceId"
+              }
+            ],
+            "navigationRefs": [
+              {
+                "direction": "inbound",
+                "pageId": "serviceList",
+                "trigger": "Edit service"
+              }
+            ],
+            "sections": [
+              {
+                "sectionName": "Service profile",
+                "mode": "edit",
+                "organisms": [
+                  {
+                    "organismName": "Service details form",
+                    "purpose": "Display current service information and allow updates to duration and price.",
+                    "userActions": [
+                      "Edit service name",
+                      "Edit service duration",
+                      "Edit service price",
+                      "Save changes"
+                    ],
+                    "requiredEntities": [
+                      "Service"
+                    ],
+                    "readsFields": [
+                      "Service.serviceId",
+                      "Service.name",
+                      "Service.durationMinutes",
+                      "Service.priceAmount"
+                    ],
+                    "writesFields": [
+                      "Service.name",
+                      "Service.durationMinutes",
+                      "Service.priceAmount"
+                    ],
+                    "rulesApplied": [
+                      "serviceDurationPriceRequired"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "bffCommands": [
+            {
+              "commandName": "getServiceDetail",
+              "purpose": "Load service details.",
+              "kind": "query",
+              "input": {
+                "serviceId": "string"
+              },
+              "output": {
+                "service": {
+                  "serviceId": "string",
+                  "name": "string",
+                  "durationMinutes": "number",
+                  "priceAmount": "number"
+                }
+              },
+              "readsEntities": [
+                "Service"
+              ],
+              "writesEntities": [],
+              "readsTables": [],
+              "writesTables": [],
+              "usecaseRefs": [
+                "getServiceDetailUsecase"
+              ],
+              "layerContract": {
+                "controllerLayer": "layer_2_controllers",
+                "mustCallLayer": "layer_3_usecases",
+                "directTableAccessForbidden": true
+              },
+              "rulesApplied": []
+            },
+            {
+              "commandName": "updateService",
+              "purpose": "Update service details.",
+              "kind": "command",
+              "input": {
+                "serviceId": "string",
+                "updates": {
+                  "name": "string?",
+                  "durationMinutes": "number?",
+                  "priceAmount": "number?"
+                }
+              },
+              "output": {
+                "service": {
+                  "serviceId": "string",
+                  "name": "string",
+                  "durationMinutes": "number",
+                  "priceAmount": "number"
+                }
+              },
+              "readsEntities": [
+                "Service"
+              ],
+              "writesEntities": [
+                "Service"
+              ],
+              "readsTables": [],
+              "writesTables": [],
+              "usecaseRefs": [
+                "updateServiceUsecase"
+              ],
+              "layerContract": {
+                "controllerLayer": "layer_2_controllers",
+                "mustCallLayer": "layer_3_usecases",
+                "directTableAccessForbidden": true
+              },
+              "rulesApplied": [
+                "serviceDurationPriceRequired"
+              ]
+            }
+          ]
+        },
+        "questions": [
+          "Is there an existing read use case for loading a single service (e.g., getServiceDetailUsecase) that the BFF must call?"
+        ],
+        "trace": [
+          "Planned page from selector serviceDetail with manager actor and manageServices capability.",
+          "Added required page input serviceId based on pageInputHints and detail page needs.",
+          "Derived organisms to view/edit Service fields and enforce serviceDurationPriceRequired rule.",
+          "Included BFF commands from bffCommandHints and mapped update to updateServiceUsecase.",
+          "Need confirmation of read use case for getServiceDetail to satisfy layer 2 -> layer 3 contract."
+        ]
+      }
+    },
+    "status": "completed",
+    "stepId": 82,
+    "interaction": null,
+    "nextSteps": null
+  }
+}

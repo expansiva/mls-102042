@@ -1,0 +1,259 @@
+{
+  "savedAt": "2026-06-08T19:04:48.016Z",
+  "agentName": "agentPlanPageDefinition",
+  "stepId": 84,
+  "planning": null,
+  "status": "waiting_after_prompt",
+  "payload": {
+    "type": "flexible",
+    "result": {
+      "toolName": "submitPageDefinitionPlan",
+      "arguments": {
+        "status": "needs_input",
+        "result": {
+          "pageDefinition": {
+            "pageId": "appointmentReschedule",
+            "pageName": "Reschedule appointment",
+            "actor": "receptionist",
+            "purpose": "Select a new time and staff for an existing appointment.",
+            "capabilities": [
+              "bookAppointments"
+            ],
+            "flowRefs": {
+              "experienceFlows": [],
+              "entityLifecycles": [
+                "appointmentBooking"
+              ],
+              "taskWorkflows": [],
+              "automations": []
+            },
+            "pluginRefs": [],
+            "mdmRefs": [
+              "customer",
+              "staffMember",
+              "service"
+            ],
+            "pageInputs": [
+              {
+                "name": "appointmentId",
+                "type": "string",
+                "required": true,
+                "sources": [
+                  "routeParam",
+                  "previousStepResult"
+                ],
+                "description": "Appointment identifier to reschedule.",
+                "entityRef": "Appointment",
+                "fieldRef": "Appointment.id"
+              },
+              {
+                "name": "appointmentSummary",
+                "type": "object",
+                "required": false,
+                "sources": [
+                  "previousStepResult"
+                ],
+                "description": "Preloaded appointment details for display (customer, staff, service, time).",
+                "entityRef": "Appointment"
+              },
+              {
+                "name": "availableStaffMembers",
+                "type": "array",
+                "required": false,
+                "sources": [
+                  "previousStepResult"
+                ],
+                "description": "Selectable staff members for rescheduling.",
+                "entityRef": "StaffMember"
+              },
+              {
+                "name": "availableTimeSlots",
+                "type": "array",
+                "required": false,
+                "sources": [
+                  "previousStepResult"
+                ],
+                "description": "Selectable time slots for rescheduling.",
+                "entityRef": "AvailabilitySlot"
+              }
+            ],
+            "navigationRefs": [
+              {
+                "direction": "inbound",
+                "pageId": "appointmentCalendar",
+                "trigger": "Reschedule appointment"
+              },
+              {
+                "direction": "outbound",
+                "pageId": "appointmentDetail",
+                "trigger": "Reschedule saved"
+              }
+            ],
+            "sections": [
+              {
+                "sectionName": "Current appointment",
+                "mode": "view",
+                "organisms": [
+                  {
+                    "organismName": "appointmentSummaryCard",
+                    "purpose": "Show the current appointment details before rescheduling.",
+                    "userActions": [],
+                    "requiredEntities": [
+                      "Appointment",
+                      "Customer",
+                      "StaffMember",
+                      "Service"
+                    ],
+                    "readsFields": [
+                      "Appointment.id",
+                      "Appointment.startTime",
+                      "Appointment.endTime",
+                      "Appointment.lifecycleState",
+                      "Appointment.customerId",
+                      "Appointment.staffMemberId",
+                      "Appointment.serviceId"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": []
+                  }
+                ]
+              },
+              {
+                "sectionName": "New schedule",
+                "mode": "edit",
+                "organisms": [
+                  {
+                    "organismName": "timeSlotSelector",
+                    "purpose": "Select a new time slot for the appointment.",
+                    "userActions": [
+                      "Select time slot"
+                    ],
+                    "requiredEntities": [
+                      "AvailabilitySlot",
+                      "StaffMember"
+                    ],
+                    "readsFields": [
+                      "AvailabilitySlot.startTime",
+                      "AvailabilitySlot.endTime",
+                      "AvailabilitySlot.status",
+                      "AvailabilitySlot.staffMemberId"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": [
+                      "appointmentNoOverlapPerStaff"
+                    ]
+                  },
+                  {
+                    "organismName": "staffMemberSelector",
+                    "purpose": "Select the staff member for the rescheduled appointment.",
+                    "userActions": [
+                      "Select staff member"
+                    ],
+                    "requiredEntities": [
+                      "StaffMember"
+                    ],
+                    "readsFields": [
+                      "StaffMember.id",
+                      "StaffMember.fullName",
+                      "StaffMember.role"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": []
+                  }
+                ]
+              },
+              {
+                "sectionName": "Reschedule confirmation",
+                "mode": "edit",
+                "organisms": [
+                  {
+                    "organismName": "rescheduleAction",
+                    "purpose": "Submit the new schedule to reschedule the appointment.",
+                    "userActions": [
+                      "Reschedule appointment"
+                    ],
+                    "requiredEntities": [
+                      "Appointment",
+                      "AvailabilitySlot",
+                      "StaffMember"
+                    ],
+                    "readsFields": [
+                      "Appointment.id"
+                    ],
+                    "writesFields": [
+                      "Appointment.startTime",
+                      "Appointment.endTime",
+                      "Appointment.staffMemberId",
+                      "AvailabilitySlot.status"
+                    ],
+                    "rulesApplied": [
+                      "appointmentNoOverlapPerStaff"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "bffCommands": [
+            {
+              "commandName": "rescheduleAppointment",
+              "purpose": "Update appointment time or staff.",
+              "kind": "command",
+              "input": {
+                "appointmentId": "string",
+                "newStartTime": "string",
+                "newEndTime": "string",
+                "staffMemberId": "string"
+              },
+              "output": {
+                "appointment": {
+                  "appointmentId": "string",
+                  "startTime": "string",
+                  "endTime": "string",
+                  "staffMemberId": "string",
+                  "lifecycleState": "string"
+                }
+              },
+              "readsEntities": [
+                "Appointment",
+                "AvailabilitySlot",
+                "StaffMember"
+              ],
+              "writesEntities": [
+                "Appointment",
+                "AvailabilitySlot"
+              ],
+              "readsTables": [],
+              "writesTables": [],
+              "usecaseRefs": [
+                "rescheduleAppointmentUsecase"
+              ],
+              "layerContract": {
+                "controllerLayer": "layer_2_controllers",
+                "mustCallLayer": "layer_3_usecases",
+                "directTableAccessForbidden": true
+              },
+              "rulesApplied": [
+                "appointmentNoOverlapPerStaff",
+                "singleLocationScope"
+              ]
+            }
+          ]
+        },
+        "questions": [
+          "Which BFF/usecase should provide appointment details, staff options, and available time slots when they are not passed from the previous page?",
+          "Should the reschedule page be able to load standalone using only appointmentId, or will appointment summary and availability always be provided by the inbound flow?"
+        ],
+        "trace": [
+          "Planned appointmentReschedule page from pageIndexItem with appointmentBooking lifecycle flow.",
+          "Kept selection data as pageInputs due to missing read usecases; included reschedule command using rescheduleAppointmentUsecase.",
+          "Applied appointmentNoOverlapPerStaff to selection and submit action per rule catalog."
+        ]
+      }
+    },
+    "status": "completed",
+    "stepId": 86,
+    "interaction": null,
+    "nextSteps": null
+  }
+}

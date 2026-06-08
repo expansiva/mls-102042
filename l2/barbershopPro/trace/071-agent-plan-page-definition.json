@@ -1,0 +1,200 @@
+{
+  "savedAt": "2026-06-08T19:03:31.965Z",
+  "agentName": "agentPlanPageDefinition",
+  "stepId": 71,
+  "planning": null,
+  "status": "waiting_after_prompt",
+  "payload": {
+    "type": "flexible",
+    "result": {
+      "toolName": "submitPageDefinitionPlan",
+      "arguments": {
+        "status": "needs_input",
+        "result": {
+          "pageDefinition": {
+            "pageId": "customerList",
+            "pageName": "Customers",
+            "actor": "receptionist",
+            "purpose": "Search, create, and manage customers.",
+            "capabilities": [
+              "manageCustomers"
+            ],
+            "flowRefs": {
+              "experienceFlows": [],
+              "entityLifecycles": [],
+              "taskWorkflows": [],
+              "automations": []
+            },
+            "pluginRefs": [],
+            "mdmRefs": [
+              "customer"
+            ],
+            "pageInputs": [],
+            "navigationRefs": [
+              {
+                "direction": "outbound",
+                "pageId": "customerDetail",
+                "trigger": "Select customer"
+              },
+              {
+                "direction": "outbound",
+                "pageId": "customerCreate",
+                "trigger": "New customer"
+              }
+            ],
+            "sections": [
+              {
+                "sectionName": "customerSearch",
+                "mode": "view",
+                "organisms": [
+                  {
+                    "organismName": "customerSearchFilters",
+                    "purpose": "Search and filter customers for quick lookup.",
+                    "userActions": [
+                      "Enter search query",
+                      "Apply filters",
+                      "Change pagination"
+                    ],
+                    "requiredEntities": [
+                      "Customer"
+                    ],
+                    "readsFields": [
+                      "Customer.name",
+                      "Customer.phone",
+                      "Customer.email",
+                      "Customer.lastVisitDate"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": []
+                  }
+                ]
+              },
+              {
+                "sectionName": "customerResults",
+                "mode": "view",
+                "organisms": [
+                  {
+                    "organismName": "customerListTable",
+                    "purpose": "Display customer summaries and enable selection for management.",
+                    "userActions": [
+                      "Select customer",
+                      "Open create customer"
+                    ],
+                    "requiredEntities": [
+                      "Customer"
+                    ],
+                    "readsFields": [
+                      "Customer.customerId",
+                      "Customer.name",
+                      "Customer.phone",
+                      "Customer.email",
+                      "Customer.lastVisitDate"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": []
+                  }
+                ]
+              }
+            ]
+          },
+          "bffCommands": [
+            {
+              "commandName": "listCustomers",
+              "purpose": "List customers for search and selection.",
+              "kind": "query",
+              "input": {
+                "query": {
+                  "type": "string",
+                  "required": false
+                },
+                "filters": {
+                  "type": "object",
+                  "required": false,
+                  "fields": {
+                    "status": {
+                      "type": "string",
+                      "required": false
+                    },
+                    "tag": {
+                      "type": "string",
+                      "required": false
+                    }
+                  }
+                },
+                "pagination": {
+                  "type": "object",
+                  "required": false,
+                  "fields": {
+                    "pageSize": {
+                      "type": "number",
+                      "required": false
+                    },
+                    "cursor": {
+                      "type": "string",
+                      "required": false
+                    }
+                  }
+                },
+                "sort": {
+                  "type": "object",
+                  "required": false,
+                  "fields": {
+                    "field": {
+                      "type": "string",
+                      "required": false
+                    },
+                    "direction": {
+                      "type": "string",
+                      "required": false
+                    }
+                  }
+                }
+              },
+              "output": {
+                "customers": [
+                  {
+                    "customerId": "string",
+                    "name": "string",
+                    "phone": "string",
+                    "email": "string",
+                    "lastVisitDate": "string"
+                  }
+                ],
+                "pageInfo": {
+                  "nextCursor": "string",
+                  "totalCount": "number"
+                }
+              },
+              "readsEntities": [
+                "Customer"
+              ],
+              "writesEntities": [],
+              "readsTables": [],
+              "writesTables": [],
+              "usecaseRefs": [],
+              "layerContract": {
+                "controllerLayer": "layer_2_controllers",
+                "mustCallLayer": "layer_3_usecases",
+                "directTableAccessForbidden": true
+              },
+              "rulesApplied": []
+            }
+          ]
+        },
+        "questions": [
+          "Which use case should the listCustomers BFF command call to satisfy the layer_2_controllers mustCallLayer rule?"
+        ],
+        "trace": [
+          "Planned customerList page from pageIndexItem with receptionist actor and manageCustomers capability.",
+          "Added search and results sections to support list, selection, and navigation actions.",
+          "Included listCustomers BFF command from bffCommandHints with Customer entity reads and no table access.",
+          "Flagged missing use case for listCustomers due to controller mustCallLayer rule."
+        ]
+      }
+    },
+    "status": "completed",
+    "stepId": 74,
+    "interaction": null,
+    "nextSteps": null
+  }
+}

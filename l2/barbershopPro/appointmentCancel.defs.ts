@@ -1,0 +1,243 @@
+export const appointmentCancelPagePlan = {
+  "schemaVersion": "2026-06-06",
+  "artifactType": "page",
+  "artifactId": "appointmentCancel",
+  "moduleName": "barbershopPro",
+  "status": "draft",
+  "source": {
+    "agentName": "agentPlanPageDefinition",
+    "stepId": 85,
+    "planId": ""
+  },
+  "data": {
+    "pageDefinition": {
+      "pageId": "appointmentCancel",
+      "pageName": "Cancel appointment",
+      "actor": "receptionist",
+      "purpose": "Cancel an existing appointment and record the reason.",
+      "capabilities": [
+        "bookAppointments"
+      ],
+      "flowRefs": {
+        "experienceFlows": [],
+        "entityLifecycles": [
+          "appointmentBooking"
+        ],
+        "taskWorkflows": [],
+        "automations": []
+      },
+      "pluginRefs": [],
+      "mdmRefs": [
+        "customer",
+        "staffMember",
+        "service"
+      ],
+      "pageInputs": [
+        {
+          "name": "appointmentId",
+          "type": "string",
+          "required": true,
+          "sources": [
+            "routeParam",
+            "previousStepResult"
+          ],
+          "description": "Identifier of the appointment to cancel.",
+          "entityRef": "Appointment",
+          "fieldRef": "Appointment.id"
+        }
+      ],
+      "navigationRefs": [
+        {
+          "direction": "inbound",
+          "pageId": "appointmentCalendar",
+          "trigger": "Cancel appointment"
+        },
+        {
+          "direction": "outbound",
+          "pageId": "appointmentCalendar",
+          "trigger": "Cancellation confirmed",
+          "description": "Return to calendar after successful cancellation."
+        }
+      ],
+      "sections": [
+        {
+          "sectionName": "Appointment overview",
+          "mode": "view",
+          "organisms": [
+            {
+              "organismName": "appointmentSummary",
+              "purpose": "Show appointment, customer, staff, service, and time details before cancellation.",
+              "userActions": [],
+              "requiredEntities": [
+                "Appointment",
+                "Customer",
+                "StaffMember",
+                "Service"
+              ],
+              "readsFields": [
+                "Appointment.id",
+                "Appointment.lifecycleState",
+                "Appointment.scheduledStart",
+                "Appointment.scheduledEnd",
+                "Appointment.customerId",
+                "Appointment.staffMemberId",
+                "Appointment.serviceId",
+                "Customer.name",
+                "Customer.phone",
+                "StaffMember.name",
+                "Service.name",
+                "Service.duration",
+                "Service.price"
+              ],
+              "writesFields": [],
+              "rulesApplied": []
+            }
+          ]
+        },
+        {
+          "sectionName": "Cancellation reason",
+          "mode": "edit",
+          "organisms": [
+            {
+              "organismName": "cancellationReasonForm",
+              "purpose": "Capture the cancellation reason from the receptionist.",
+              "userActions": [
+                "Enter cancellation reason"
+              ],
+              "requiredEntities": [
+                "Appointment"
+              ],
+              "readsFields": [
+                "Appointment.id"
+              ],
+              "writesFields": [
+                "Appointment.cancellationReason"
+              ],
+              "rulesApplied": []
+            }
+          ]
+        },
+        {
+          "sectionName": "Confirm cancellation",
+          "mode": "confirm",
+          "organisms": [
+            {
+              "organismName": "cancelAppointmentAction",
+              "purpose": "Submit the cancellation request and confirm the update.",
+              "userActions": [
+                "Cancel appointment"
+              ],
+              "requiredEntities": [
+                "Appointment"
+              ],
+              "readsFields": [
+                "Appointment.id"
+              ],
+              "writesFields": [
+                "Appointment.lifecycleState",
+                "Appointment.cancellationReason"
+              ],
+              "rulesApplied": [
+                "singleLocationScope"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "bffCommands": [
+      {
+        "commandName": "getAppointmentForCancel",
+        "purpose": "Retrieve appointment details needed to review before cancellation.",
+        "kind": "query",
+        "input": {
+          "appointmentId": "string"
+        },
+        "output": {
+          "appointment": {
+            "id": "string",
+            "lifecycleState": "string",
+            "scheduledStart": "string",
+            "scheduledEnd": "string",
+            "customerId": "string",
+            "staffMemberId": "string",
+            "serviceId": "string",
+            "cancellationReason": "string|null"
+          },
+          "customer": {
+            "id": "string",
+            "name": "string",
+            "phone": "string"
+          },
+          "staffMember": {
+            "id": "string",
+            "name": "string"
+          },
+          "service": {
+            "id": "string",
+            "name": "string",
+            "duration": "number",
+            "price": "number"
+          }
+        },
+        "readsEntities": [
+          "Appointment",
+          "Customer",
+          "StaffMember",
+          "Service"
+        ],
+        "writesEntities": [],
+        "readsTables": [],
+        "writesTables": [],
+        "usecaseRefs": [
+          "cancelAppointmentUsecase"
+        ],
+        "layerContract": {
+          "controllerLayer": "layer_2_controllers",
+          "mustCallLayer": "layer_3_usecases",
+          "directTableAccessForbidden": true
+        },
+        "rulesApplied": [
+          "singleLocationScope"
+        ]
+      },
+      {
+        "commandName": "cancelAppointment",
+        "purpose": "Cancel the appointment and store the cancellation reason.",
+        "kind": "command",
+        "input": {
+          "appointmentId": "string",
+          "reason": "string"
+        },
+        "output": {
+          "appointmentId": "string",
+          "lifecycleState": "string",
+          "cancelledAt": "string",
+          "cancellationReason": "string",
+          "confirmationMessage": "string"
+        },
+        "readsEntities": [
+          "Appointment"
+        ],
+        "writesEntities": [
+          "Appointment"
+        ],
+        "readsTables": [],
+        "writesTables": [],
+        "usecaseRefs": [
+          "cancelAppointmentUsecase"
+        ],
+        "layerContract": {
+          "controllerLayer": "layer_2_controllers",
+          "mustCallLayer": "layer_3_usecases",
+          "directTableAccessForbidden": true
+        },
+        "rulesApplied": [
+          "singleLocationScope"
+        ]
+      }
+    ]
+  }
+} as const;
+
+export default appointmentCancelPagePlan;

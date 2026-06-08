@@ -1,0 +1,175 @@
+{
+  "savedAt": "2026-06-08T19:05:12.824Z",
+  "agentName": "agentPlanPageDefinition",
+  "stepId": 94,
+  "planning": null,
+  "status": "waiting_after_prompt",
+  "payload": {
+    "type": "flexible",
+    "result": {
+      "toolName": "submitPageDefinitionPlan",
+      "arguments": {
+        "status": "ok",
+        "result": {
+          "pageDefinition": {
+            "pageId": "walkInSlotSuggestions",
+            "pageName": "Walk-in slot suggestions",
+            "actor": "receptionist",
+            "purpose": "Request and review suggested walk-in time slots.",
+            "capabilities": [
+              "llmRecommendations"
+            ],
+            "flowRefs": {
+              "experienceFlows": [],
+              "entityLifecycles": [],
+              "taskWorkflows": [
+                "walkInSlotSuggestion"
+              ],
+              "automations": []
+            },
+            "pluginRefs": [
+              "llmWalkInSlot"
+            ],
+            "mdmRefs": [],
+            "pageInputs": [
+              {
+                "name": "desiredDate",
+                "type": "date",
+                "required": false,
+                "sources": [
+                  "queryParam",
+                  "previousStepResult"
+                ],
+                "description": "Preferred date to request walk-in suggestions for."
+              },
+              {
+                "name": "servicePreference",
+                "type": "string",
+                "required": false,
+                "sources": [
+                  "queryParam",
+                  "previousStepResult"
+                ],
+                "description": "Preferred service for the walk-in request."
+              }
+            ],
+            "navigationRefs": [
+              {
+                "direction": "outbound",
+                "pageId": "appointmentBooking",
+                "trigger": "Book suggested slot",
+                "description": "Start booking for a selected suggested slot."
+              }
+            ],
+            "sections": [
+              {
+                "sectionName": "Request walk-in suggestions",
+                "mode": "create",
+                "organisms": [
+                  {
+                    "organismName": "walkInSlotRequestForm",
+                    "purpose": "Capture desired date and service to request walk-in slot suggestions.",
+                    "userActions": [
+                      "Request walk-in time slots",
+                      "Refresh suggestions"
+                    ],
+                    "requiredEntities": [
+                      "AvailabilitySlot",
+                      "StaffMember"
+                    ],
+                    "readsFields": [],
+                    "writesFields": [],
+                    "rulesApplied": [
+                      "RULE_singleLocationScope"
+                    ]
+                  }
+                ]
+              },
+              {
+                "sectionName": "Suggested time slots",
+                "mode": "view",
+                "organisms": [
+                  {
+                    "organismName": "walkInSlotSuggestionList",
+                    "purpose": "Display recommended walk-in time slots and allow selection for booking.",
+                    "userActions": [
+                      "Select suggested slot",
+                      "Book suggested slot"
+                    ],
+                    "requiredEntities": [
+                      "AvailabilitySlot",
+                      "StaffMember"
+                    ],
+                    "readsFields": [
+                      "AvailabilitySlot.startTime",
+                      "AvailabilitySlot.endTime",
+                      "AvailabilitySlot.staffMemberId"
+                    ],
+                    "writesFields": [],
+                    "rulesApplied": [
+                      "RULE_singleLocationScope"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "bffCommands": [
+            {
+              "commandName": "requestWalkInSlotSuggestions",
+              "purpose": "Get walk-in slot recommendations.",
+              "kind": "command",
+              "input": {
+                "desiredDate": "date",
+                "servicePreference": "string"
+              },
+              "output": {
+                "suggestions": [
+                  {
+                    "availabilitySlotId": "string",
+                    "startTime": "datetime",
+                    "endTime": "datetime",
+                    "staffMemberId": "string",
+                    "staffMemberName": "string",
+                    "confidenceScore": "number"
+                  }
+                ]
+              },
+              "readsEntities": [
+                "AvailabilitySlot",
+                "Appointment",
+                "StaffMember"
+              ],
+              "writesEntities": [
+                "AvailabilitySlot"
+              ],
+              "readsTables": [],
+              "writesTables": [],
+              "usecaseRefs": [
+                "requestWalkInSlotsUsecase"
+              ],
+              "layerContract": {
+                "controllerLayer": "layer_2_controllers",
+                "mustCallLayer": "layer_3_usecases",
+                "directTableAccessForbidden": true
+              },
+              "rulesApplied": [
+                "RULE_singleLocationScope"
+              ]
+            }
+          ]
+        },
+        "questions": [],
+        "trace": [
+          "Planned page from selector walkInSlotSuggestions with task workflow walkInSlotSuggestion and llmRecommendations capability.",
+          "Derived organisms for requesting and viewing suggestions based on primary user action and bff command hint.",
+          "Mapped requestWalkInSlotSuggestions command to requestWalkInSlotsUsecase with singleLocationScope rule applied."
+        ]
+      }
+    },
+    "status": "completed",
+    "stepId": 96,
+    "interaction": null,
+    "nextSteps": null
+  }
+}

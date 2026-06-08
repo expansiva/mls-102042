@@ -1,0 +1,141 @@
+export const serviceCreatePagePlan = {
+  "schemaVersion": "2026-06-06",
+  "artifactType": "page",
+  "artifactId": "serviceCreate",
+  "moduleName": "barbershopPro",
+  "status": "draft",
+  "source": {
+    "agentName": "agentPlanPageDefinition",
+    "stepId": 79,
+    "planId": ""
+  },
+  "data": {
+    "pageDefinition": {
+      "pageId": "serviceCreate",
+      "pageName": "New service",
+      "actor": "manager",
+      "purpose": "Define a new service with duration and price.",
+      "capabilities": [
+        "manageServices"
+      ],
+      "flowRefs": {
+        "experienceFlows": [],
+        "entityLifecycles": [],
+        "taskWorkflows": [],
+        "automations": []
+      },
+      "pluginRefs": [],
+      "mdmRefs": [
+        "service"
+      ],
+      "pageInputs": [],
+      "navigationRefs": [
+        {
+          "direction": "inbound",
+          "pageId": "serviceList",
+          "trigger": "New service"
+        },
+        {
+          "direction": "outbound",
+          "pageId": "serviceDetail",
+          "trigger": "Save service"
+        }
+      ],
+      "sections": [
+        {
+          "sectionName": "Service details",
+          "mode": "edit",
+          "organisms": [
+            {
+              "organismName": "ServiceForm",
+              "purpose": "Capture service name, duration, and price.",
+              "userActions": [
+                "Enter service name",
+                "Enter duration",
+                "Enter price"
+              ],
+              "requiredEntities": [
+                "Service"
+              ],
+              "readsFields": [],
+              "writesFields": [
+                "serviceName",
+                "durationMinutes",
+                "priceAmount"
+              ],
+              "rulesApplied": [
+                "serviceDurationPriceRequired"
+              ]
+            }
+          ]
+        },
+        {
+          "sectionName": "Create service",
+          "mode": "create",
+          "organisms": [
+            {
+              "organismName": "CreateServiceAction",
+              "purpose": "Submit the new service for creation.",
+              "userActions": [
+                "Create service"
+              ],
+              "requiredEntities": [
+                "Service"
+              ],
+              "readsFields": [
+                "serviceName",
+                "durationMinutes",
+                "priceAmount"
+              ],
+              "writesFields": [
+                "serviceId"
+              ],
+              "rulesApplied": [
+                "serviceDurationPriceRequired"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "bffCommands": [
+      {
+        "commandName": "createService",
+        "purpose": "Create a new service.",
+        "kind": "command",
+        "input": {
+          "serviceName": "string",
+          "durationMinutes": "number",
+          "priceAmount": "number"
+        },
+        "output": {
+          "serviceId": "string",
+          "serviceName": "string",
+          "durationMinutes": "number",
+          "priceAmount": "number"
+        },
+        "readsEntities": [
+          "Service"
+        ],
+        "writesEntities": [
+          "Service"
+        ],
+        "readsTables": [],
+        "writesTables": [],
+        "usecaseRefs": [
+          "createServiceUsecase"
+        ],
+        "layerContract": {
+          "controllerLayer": "layer_2_controllers",
+          "mustCallLayer": "layer_3_usecases",
+          "directTableAccessForbidden": true
+        },
+        "rulesApplied": [
+          "serviceDurationPriceRequired"
+        ]
+      }
+    ]
+  }
+} as const;
+
+export default serviceCreatePagePlan;
