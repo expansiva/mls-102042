@@ -18,5 +18,36 @@
   "reasons": {},
   "services": [],
   "links": [],
-  "servicesConfigEnabled": false
+  "servicesConfigEnabled": false,
+  "modules": [
+  ],
+  "layouts": {
+    "1": {
+      "name": "Default"
+    },
+    "2": {
+      "name": "Ux 2"
+    },
+    "3": {
+      "name": "Ux 3"
+    }
+  },
+  "dependencies": [
+    {
+      "projectId": "102034",
+      "kind": "mdm-infrastructure"
+    }
+  ],
+  "masters": {
+    "frontend": {
+      "masterProject": 102020,
+      "agentFolder": "agentChangeFrontend",
+      "runtimeProject": 102033
+    },
+    "backend": {
+      "masterProject": 102021,
+      "agentFolder": "agentChangeBackend",
+      "runtimeProject": 102034
+    }
+  }
 }
